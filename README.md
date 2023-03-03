@@ -1,0 +1,2 @@
+# infHS
+ Informative Horseshoe regression
