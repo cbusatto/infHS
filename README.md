@@ -12,5 +12,6 @@ Used datasets p38MAPK.RData and methylation_data_subset.RData are available in f
 - full methylation dataset can be found at https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE99511
 
 # References
-Busatto, Claudio and van de Wiel, Mark (2023). "Informative co-data learning for high-dimensional Horseshoe regression". Arxiv
+Busatto, Claudio and van de Wiel, Mark (2023). "Informative co-data learning for high-dimensional Horseshoe regression". Arxiv.
+
 Lappalainen, Tuuli and Sammeth, Michael and Friedländer, Marc and al. (2013). "Transcriptome and genome sequencing uncovers functional variation in humans". Nature, 501.
