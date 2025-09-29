@@ -1,0 +1,36 @@
+library(infHS)
+
+set.seed(10)
+n = 1000000
+res = matrix(0, n, 3)
+i = 1
+
+for (k in 1:n) {
+  a = runif(1, 0, 20)
+  b = runif(1, 0, 20)
+  c = runif(1, -15, 15)
+  
+  l = rlambda(a, b, c, 0)
+  
+  if (l == 0) {
+    res[i, ] = c(a, b, c)
+    i = i + 1
+  }
+  
+  print(k)
+}
+
+a / b
+a / c
+b / c
+
+ind = which(res[, 1] == 0)
+res = res[-ind, ]
+
+par(mfrow = c(2, 2))
+plot(res[, 1], res[, 2], xlab = "a", ylab = "b")
+plot(res[, 1], res[, 3], xlab = "a", ylab = "c")
+plot(res[, 2], res[, 3], xlab = "b", ylab = "c")
+
+
+

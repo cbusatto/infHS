@@ -1,0 +1,228 @@
+library(infHS)
+library(horseshoe)
+library(ecpc)
+library(glmnet)
+library(pROC)
+library(mvtnorm)
+
+set.seed(22)
+
+n = 200
+ntest = 50
+p = 1000
+p0 = 50
+
+data_SIG = matrix(rnorm((n+ntest)*p), n+ntest, p)
+X = data_SIG[1:n, ]
+X = cbind(rep(1, n), scale(X))
+#
+X_test = data_SIG[(n+1):(n+ntest), ]
+X_test = cbind(rep(1, ntest), scale(X_test))
+
+# data_SIG = huge::huge.generator(n = n + ntest, d = p, graph = 'hub',
+# v = 11.3, u = 0.2, g = p/20)
+
+# Sig = data_SIG$sigma
+# X = data_SIG$data[1:n, ]
+# X = cbind(rep(1, n), scale(X))
+# X_test = data_SIG$data[(n+1):(n+ntest), ]
+# X_test = cbind(rep(1, ntest), scale(X_test))
+
+
+# X = matrix(rnorm(n*p), n, p)
+# X = cbind(rep(1, n), scale(X))
+# ntest = 500
+# X_test = matrix(rnorm(ntest*p), ntest, p)
+# X_test = cbind(rep(1, ntest), scale(X_test))
+
+beta0 = rep(0, p+1)
+beta0[1] = rnorm(1, 0, sqrt(0.5))
+u = rbinom(p0, 1, 0.4)
+ix = sample(1:p, p0)
+ix_no = setdiff(1:p, ix)
+beta0[ix+1] = (-1)^(u) * (0.75 * log(n) / sqrt(n) + abs(rnorm(p0, 0, sqrt(0.75))))
+
+## :::: SIMULATE CO-DATA SOURCES (D = 2) ::::
+
+p01 = 30
+p02 = 10
+G1size = 50
+G2size = 70
+
+G1 = rep(0, p)
+G1[ix[1:5]] = 1
+G1[sample(ix[-c(1:5)], p01-5)] = 1
+G1[sample(ix_no, G1size-p01)] = 1
+
+G2 = rep(0, p)
+G2[ix[1:5]] = 1
+G2[sample(ix[-c(1:5)], p02-5)] = 1
+G2[sample(ix_no, G2size-p02)] = 1
+
+Z = list()
+Z[[1]] = rep(1, p)
+Z[[2]] = model.matrix(~ -1 + as.factor(G1))[, 2]
+Z[[3]] = model.matrix(~ -1 + as.factor(G2))[, 2]
+
+D = 2 + 1   ## (intercept included)
+md = c(1, 1, 1)
+
+## :::: SET HYPERPARAMETERS ::::
+
+## hyperparameters for sigma^2
+hyp_sigma = c(0.5, 10)
+
+## hyperparameters for \kappa_d
+# a_k = rep(1, D)
+# b_k = rep(10, D)
+a_k = c(1, 1, 1)
+b_k = c(5, 10, 10)
+
+y = X %*% beta0 + rnorm(n)
+y_test = X_test %*% beta0 + rnorm(ntest)
+
+B = 10000
+bn = 5000
+res_infHS_GIBBS = infHS_FB(B, bn, 
+                           y = y, X = X, Z = Z, M = sum(md), 
+                           hyp_sigma = hyp_sigma, 
+                           a_k = a_k, b_k = b_k, 
+                           ping = 1000)
+
+res_hs = horseshoe(y, X, method.tau = "truncatedCauchy", method.sigma = "Jeffreys",
+                   burn = 5000, nmc = 5000)
+
+
+b1 = res_infHS_GIBBS$Beta
+beta_FB = apply(res_infHS_GIBBS$Beta, 2, mean)
+sd_FB = apply(res_infHS_GIBBS$Beta, 2, sd)
+CI_FB = apply(res_infHS_GIBBS$Beta[, -1], 2, function(x) quantile(x, probs = c(0.025, 0.975)))
+cov_FB = (CI_FB[1, ] <= beta0[-1]) & (beta0[-1] <= CI_FB[2, ])
+width_FB = CI_FB[2, ] - CI_FB[1, ]
+
+b2 = res_hs$BetaSamples
+beta_HS = res_hs$BetaHat
+sd_HS = apply(res_hs$BetaSamples, 1, sd)
+CI_HS2 = apply(res_hs$BetaSamples[-1, ], 1, function(x) quantile(x, probs = c(0.025, 0.975)))
+cov_HS2 = (CI_HS2[1, ] <= beta0[-1]) & (beta0[-1] <= CI_HS2[2, ])
+width_HS2 = CI_HS2[2, ] - CI_HS2[1, ]
+# CI_HS = matrix(0, 2, p)
+# CI_HS[1, ] = res_hs$LeftCI[-1]
+# CI_HS[2, ] = res_hs$RightCI[-1]
+# cov_HS = (CI_HS[1, ] <= beta0[-1]) & (beta0[-1] <= CI_HS[2, ])
+# width_HS = CI_HS[2, ] - CI_HS[1, ]
+
+b1_n200_p1000 = b1
+b2_n200_p1000 = b2
+beta0_n200_1000 = beta0
+
+b1_n200_p500 = b1
+b2_n200_p500 = b2
+beta0_n200_p500 = beta0
+
+b1_n200_p200 = b1
+b2_n200_p200 = b2
+beta0_n200_p200 = beta0
+
+b1_n100_p200 = b1
+b2_n100_p200 = b2
+beta0_n100_p200 = beta0
+
+b1_n100_p1000 = b1
+b2_n100_p1000 = b2
+beta0_n100_p1000 = beta0
+
+b1_n100_p500 = b1
+b2_n100_p500 = b2
+beta0_n100_p500 = beta0
+
+b1_n50_p1000 = b1
+b2_n50_p1000 = b2
+beta0_n50_p1000 = beta0
+
+b1_n50_p200 = b1
+b2_n50_p200 = b2
+beta0_n50_p200 = beta0
+
+b1_n50_p500 = b1
+b2_n50_p500 = b2
+beta0_n50_p500 = beta0
+
+which(beta0!=0)
+# [1]   1   9  10  12  17  20  24  38  41  43  53  54  56  71  73  74  78  82  84  92  95  96  99 100
+# [25] 110 116 121 125 126 127 128 129 138 141 143 148 161 162 163 165 166 169 172 174 176 181 185 189
+# [49] 192 195 201
+
+beta0[10]
+beta0[69]
+beta0[95]
+beta0[233]
+beta0[438]
+
+
+b1 = b1_n50_p200
+b2 = b2_n50_p200
+beta0 = beta0_n50_p200
+
+which(beta0!=0)
+
+xlim = 2
+ylim = 10
+par(mfrow = c(1, 2))
+k = 32
+hist(b1[, k], freq = F, nclass = 100, xlim = c(-xlim, xlim), ylim = c(0, ylim), xlab = "", main = "beta0")
+hist(b2[, k], freq = F, nclass = 100, add = T, col = 2)
+
+k = 17
+hist(b1[, k], freq = F, nclass = 100, xlim = c(-xlim, xlim), ylim = c(0, ylim), xlab = "", main = "beta1")
+hist(b2[, k], freq = F, nclass = 100, add = T, col = 2)
+abline(v = beta0[k], lty = 2)
+
+xl = c(-3.7, 5.5)
+par(mfrow = c(3, 3))
+hist(b1[, 10], freq = F, nclass = 100, xlim = xl, main = "beta1")
+hist(b2[, 10], freq = F, nclass = 100, add = T, col = 2)
+
+hist(b1[, 69], freq = F, nclass = 100, xlim = xl, main = "beta1")
+hist(b2[, 69], freq = F, nclass = 100, add = T, col = 2)
+
+hist(b1[, 95], freq = F, nclass = 100, xlim = xl, main = "beta1")
+hist(b2[, 95], freq = F, nclass = 100, add = T, col = 2)
+
+hist(b1[, 233], freq = F, nclass = 100, xlim = xl, main = "beta1")
+hist(b2[, 233], freq = F, nclass = 100, add = T, col = 2)
+
+hist(b1[, 438], freq = F, nclass = 100, xlim = xl, main = "beta1")
+hist(b2[, 438], freq = F, nclass = 100, add = T, col = 2)
+
+hist(b1[, 33], freq = F, nclass = 100, xlim = xl, main = "beta0")
+hist(b2[, 33], freq = F, nclass = 100, add = T, col = 2)
+
+hist(b1[, 163], freq = F, nclass = 100, xlim = xl, main = "beta0")
+hist(b2[, 163], freq = F, nclass = 100, add = T, col = 2)
+
+hist(b1[, 230], freq = F, nclass = 100, xlim = xl, main = "beta0")
+hist(b2[, 230], freq = F, nclass = 100, add = T, col = 2)
+
+hist(b1[, 436], freq = F, nclass = 100, xlim = xl, main = "beta0")
+hist(b2[, 436], freq = F, nclass = 100, add = T, col = 2)
+par(mfrow = c(1, 1))
+
+
+mean(sd_FB[which(beta0!=0)])
+mean(sd_HS[which(beta0!=0)])
+mean(sd_FB[-which(beta0!=0)])
+mean(sd_HS[-which(beta0!=0)])
+
+hist(sd_FB, freq = F, nclass = 50, xlim = c(0, 1))
+hist(sd_HS, freq = F, nclass = 50, add = T, col = 2)
+
+apply(res_infHS_GIBBS$Gamma, 2, mean)
+
+# bmax = 2000
+# res_infHS_VB = infHS_VB(y = y, X = X, Z = Z, M = sum(md), 
+#                         hyp_sigma = hyp_sigma,
+#                         a_k = a_k, b_k = b_k, 
+#                         eps = 0.001, ping = 250, bmax = bmax)
+
+

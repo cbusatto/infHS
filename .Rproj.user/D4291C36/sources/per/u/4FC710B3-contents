@@ -1,0 +1,36 @@
+K = 5
+e1 = log(1/(K-1))
+e2 = log(-(K+1+exp(-e1)) / (-K+1+exp(e1)))
+
+exp(e1) / (1 + exp(e1))
+exp(e1+e2) / (1 + exp(e1+e2)) - exp(e1) / (1 + exp(e1))
+
+e3 = log(-(K+1+exp(-e1-e2)) / (-K+1+exp(e1+e2)))
+
+exp(e1+e2+e3) / (1 + exp(e1+e2+e3)) - exp(e1+e2) / (1 + exp(e1+e2))
+
+e4 = log(-(K+1+exp(-e1-e2-e3)) / (-K+1+exp(e1+e2+e3)))
+
+exp(e1+e2+e3+e4) / (1 + exp(e1+e2+e3+e4)) - exp(e1+e2+e3) / (1 + exp(e1+e2+e3))
+1 / (1 + exp(e1+e2+e3+e4))
+
+
+K = 4
+e1 = log(1/(K-1))
+e2 = log(2/(K-2))
+e3 = log(3/(K-3))
+
+e3-e2
+e2-e1
+
+K = 5
+e1 = log(1/(K-1))
+e2 = log(2/(K-2))
+e3 = log(3/(K-3))
+e4 = log(4/(K-4))
+
+e4-e3
+e3-e2
+e2-e1
+
+exp(e4-e3)

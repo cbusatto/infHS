@@ -1,0 +1,79 @@
+load("C:/Users/HP/Desktop/infHS/res_n50_p_all_independent.Rdata")
+RES_n50_ind = RES
+load("C:/Users/HP/Desktop/infHS/res_n100_p_all_independent.Rdata")
+RES_n100_ind = RES
+load("C:/Users/HP/Desktop/infHS/res_n200_p_all_independent.Rdata")
+RES_n200_ind = RES
+
+RES = c(RES_n50_ind, RES_n100_ind, RES_n200_ind)
+
+RES[[12]]$time
+
+data_time = matrix(0, 60, 4)
+colnames(data_time) = c("n", "p", "method", "time")
+data_time[, 1] = c(rep(50, 20), rep(100, 20), rep(200, 20))
+data_time[, 2] = c(rep(c(200, 500, 1000, 1500), each = 5))
+data_time[, 3] = as.factor(c("infHS_FB", "infHS_VB", "HS", "LASSO", "ECPC"))
+tmp = c(0)
+for (i in 1:12) {
+  tmp = c(tmp, RES[[i]]$time)
+}
+data_time[, 4] = (tmp[-1])
+
+library(ggplot2)
+
+data = as.data.frame(data_time)
+data$n = factor(data$n, levels = c("50", "100", "200"))
+data$p = factor(data$p, levels = c("200", "500", "1000", "1500"))
+# data$p = as.numeric(data$p)
+data$method = as.factor(c("infHS_FB", "infHS_VB", "HS", "LASSO", "ECPC"))
+data$time = as.numeric(data$time)
+
+ggplot(data, aes(x = p, y = time, group = method)) +
+  geom_line(size = 0.8, aes(color = method)) +
+  geom_point() +
+  facet_wrap(~ n, labeller = label_both) +
+  xlab("p") + ylab("log-time") +
+  theme_bw() +  
+  theme(
+    # plot.title = element_text(face = "bold", size = 12),
+    legend.background = element_rect(fill = "white", size = 4, colour = "white"),
+    legend.justification = c(0, 1),
+    # axis.title.x = element_blank(),
+    # axis.text.x = element_text(colour = 'black', angle = 90, size = 13, hjust = 0.5, vjust = 0.5),
+    # legend.position = c(2, 3),
+    # axis.ticks = element_line(colour = "grey70", size = 0.2),
+    # panel.grid.major = element_line(colour = "grey70", size = 0.2),
+    panel.grid.minor = element_blank()
+  ) 
+  # scale_colour_grey()
+# scale_x_continuous(labels=c("10", "20", "30")) +
+# ylim(0.0, 1.0) +
+# scale_color_brewer(palette="Greys")
+# scale_color_manual(values=c("red", "black", "green"))
+
+
+
+
+data_SIG = huge::huge.generator(n = 10, d = 20, graph = 'random')
+S = as.matrix(data_SIG$theta)
+diag(S) = 1
+S
+qr.R(qr(S))
+
+
+data_SIG = huge::huge.generator(n = 10, d = 5, graph = 'random')
+S1 = data_SIG$sigma
+
+data_SIG = huge::huge.generator(n = 10, d = 5, graph = 'random')
+S2 = data_SIG$sigma
+
+chol(S1 + S2)
+chol(S1) + chol(S2) 
+
+
+
+
+
+
+

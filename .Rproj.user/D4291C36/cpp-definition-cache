@@ -1,0 +1,634 @@
+[
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/DVLA.cpp",
+        "file_last_write": 1655110730.0,
+        "definitions": [],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/DVLA.h",
+        "file_last_write": 1655110730.0,
+        "definitions": [],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/DVSA.cpp",
+        "file_last_write": 1655110730.0,
+        "definitions": [
+            {
+                "usr": "c:DVSA.cpp@55@macro@EIGEN_USE_BLAS",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_BLAS",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/DVSA.cpp",
+                "line": 4,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:DVSA.cpp@79@macro@EIGEN_USE_LAPACKE",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_LAPACKE",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/DVSA.cpp",
+                "line": 5,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:DVSA.cpp@106@macro@pi",
+                "kind": 9,
+                "parent_name": "",
+                "name": "pi",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/DVSA.cpp",
+                "line": 6,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@DVSA#&1d#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "DVSA(const double &, const double &)",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/DVSA.cpp",
+                "line": 12,
+                "column": 8,
+                "hidden": false
+            }
+        ],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/DVSA.h",
+        "file_last_write": 1655110730.0,
+        "definitions": [],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/Gamma2.cpp",
+        "file_last_write": 1655110732.0,
+        "definitions": [
+            {
+                "usr": "c:Gamma2.cpp@32@macro@EIGEN_USE_BLAS",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_BLAS",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/Gamma2.cpp",
+                "line": 2,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:Gamma2.cpp@56@macro@EIGEN_USE_LAPACKE",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_LAPACKE",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/Gamma2.cpp",
+                "line": 3,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:Gamma2.cpp@83@macro@pi",
+                "kind": 9,
+                "parent_name": "",
+                "name": "pi",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/Gamma2.cpp",
+                "line": 4,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@gamma2#&1d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "gamma2(const double &)",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/Gamma2.cpp",
+                "line": 10,
+                "column": 8,
+                "hidden": false
+            }
+        ],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/Gamma2.h",
+        "file_last_write": 1655110732.0,
+        "definitions": [],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/InfHS_codata.cpp",
+        "file_last_write": 1726572632.0,
+        "definitions": [
+            {
+                "usr": "c:InfHS_codata.cpp@77@macro@EIGEN_USE_BLAS",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_BLAS",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/InfHS_codata.cpp",
+                "line": 5,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:InfHS_codata.cpp@101@macro@EIGEN_USE_LAPACKE",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_LAPACKE",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/InfHS_codata.cpp",
+                "line": 6,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@infHS_FB#&1I#S0_#S0_#S0_#1I#S0_#S0_#S0_#S0_#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "infHS_FB(const int &, const int &, const Eigen::VectorXd &, const Eigen::MatrixXd &, const Rcpp::List, const int &, const Eigen::VectorXd &, const Eigen::VectorXd &, const Eigen::VectorXd &, const int &)",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/InfHS_codata.cpp",
+                "line": 19,
+                "column": 12,
+                "hidden": false
+            }
+        ],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/InfHS_codata_VB.cpp",
+        "file_last_write": 1746694998.0,
+        "definitions": [
+            {
+                "usr": "c:InfHS_codata_VB.cpp@105@macro@EIGEN_USE_BLAS",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_BLAS",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/InfHS_codata_VB.cpp",
+                "line": 6,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:InfHS_codata_VB.cpp@129@macro@EIGEN_USE_LAPACKE",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_LAPACKE",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/InfHS_codata_VB.cpp",
+                "line": 7,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@infHS_VB#&1I#S0_#1I#S0_#S0_#S0_#S0_#S0_#&1d#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "infHS_VB(const Eigen::VectorXd &, const Eigen::MatrixXd &, const Rcpp::List, const int &, const Eigen::VectorXd &, const Eigen::VectorXd &, const Eigen::VectorXd &, const int &, const double &, const int &)",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/InfHS_codata_VB.cpp",
+                "line": 24,
+                "column": 12,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@infHS_VB_probit#&1I#S0_#1I#S0_#S0_#S0_#S0_#&1d#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "infHS_VB_probit(const Eigen::VectorXd &, const Eigen::MatrixXd &, const Rcpp::List, const int &, const Eigen::VectorXd &, const Eigen::VectorXd &, const int &, const double &, const int &)",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/InfHS_codata_VB.cpp",
+                "line": 271,
+                "column": 12,
+                "hidden": false
+            }
+        ],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/VVLA.cpp",
+        "file_last_write": 1655110732.0,
+        "definitions": [
+            {
+                "usr": "c:VVLA.cpp@74@macro@EIGEN_USE_BLAS",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_BLAS",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/VVLA.cpp",
+                "line": 5,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:VVLA.cpp@98@macro@EIGEN_USE_LAPACKE",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_LAPACKE",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/VVLA.cpp",
+                "line": 6,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:VVLA.cpp@125@macro@pi",
+                "kind": 9,
+                "parent_name": "",
+                "name": "pi",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/VVLA.cpp",
+                "line": 7,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@VVLA#&1d#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "VVLA(const double &, const double &)",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/VVLA.cpp",
+                "line": 13,
+                "column": 8,
+                "hidden": false
+            }
+        ],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/VVLA.h",
+        "file_last_write": 1655110732.0,
+        "definitions": [],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/factorial.cpp",
+        "file_last_write": 1655110730.0,
+        "definitions": [
+            {
+                "usr": "c:factorial.cpp@34@macro@EIGEN_USE_BLAS",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_BLAS",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/factorial.cpp",
+                "line": 3,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:factorial.cpp@58@macro@EIGEN_USE_LAPACKE",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_LAPACKE",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/factorial.cpp",
+                "line": 4,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@factorial#&1I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "factorial(const int &)",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/factorial.cpp",
+                "line": 9,
+                "column": 11,
+                "hidden": false
+            }
+        ],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/factorial.h",
+        "file_last_write": 1655110730.0,
+        "definitions": [],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/pbdv.cpp",
+        "file_last_write": 1655371728.0,
+        "definitions": [
+            {
+                "usr": "c:pbdv.cpp@112@macro@EIGEN_USE_BLAS",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_BLAS",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/pbdv.cpp",
+                "line": 7,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:pbdv.cpp@136@macro@EIGEN_USE_LAPACKE",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_LAPACKE",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/pbdv.cpp",
+                "line": 8,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:pbdv.cpp@163@macro@pi",
+                "kind": 9,
+                "parent_name": "",
+                "name": "pi",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/pbdv.cpp",
+                "line": 9,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@pbdv#&1d#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "pbdv(const double &, const double &)",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/pbdv.cpp",
+                "line": 21,
+                "column": 8,
+                "hidden": false
+            }
+        ],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/pbdv.h",
+        "file_last_write": 1655110732.0,
+        "definitions": [],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/rgamma3p.cpp",
+        "file_last_write": 1695211134.0,
+        "definitions": [
+            {
+                "usr": "c:rgamma3p.cpp@34@macro@EIGEN_USE_BLAS",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_BLAS",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/rgamma3p.cpp",
+                "line": 3,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:rgamma3p.cpp@58@macro@EIGEN_USE_LAPACKE",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_LAPACKE",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/rgamma3p.cpp",
+                "line": 4,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:rgamma3p.cpp@85@macro@pi",
+                "kind": 9,
+                "parent_name": "",
+                "name": "pi",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/rgamma3p.cpp",
+                "line": 5,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:rgamma3p.cpp@115@macro@s2pi",
+                "kind": 9,
+                "parent_name": "",
+                "name": "s2pi",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/rgamma3p.cpp",
+                "line": 6,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@rg3p_c1#&1d#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rg3p_c1(const double &, const double &)",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/rgamma3p.cpp",
+                "line": 21,
+                "column": 8,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@rg3p_approx#&1d#S0_#&1I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rg3p_approx(const double &, const double &, const int &)",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/rgamma3p.cpp",
+                "line": 401,
+                "column": 8,
+                "hidden": false
+            }
+        ],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/rgamma3p_tabulated.cpp",
+        "file_last_write": 1695211288.0,
+        "definitions": [
+            {
+                "usr": "c:rgamma3p_tabulated.cpp@72@macro@EIGEN_USE_BLAS",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_BLAS",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/rgamma3p_tabulated.cpp",
+                "line": 5,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:rgamma3p_tabulated.cpp@96@macro@EIGEN_USE_LAPACKE",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_LAPACKE",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/rgamma3p_tabulated.cpp",
+                "line": 6,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:rgamma3p_tabulated.cpp@123@macro@pi",
+                "kind": 9,
+                "parent_name": "",
+                "name": "pi",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/rgamma3p_tabulated.cpp",
+                "line": 7,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:rgamma3p_tabulated.cpp@153@macro@s2pi",
+                "kind": 9,
+                "parent_name": "",
+                "name": "s2pi",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/rgamma3p_tabulated.cpp",
+                "line": 8,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@rg3p#&1d#S0_#&1I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rg3p(const double &, const double &, const int &)",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/rgamma3p_tabulated.cpp",
+                "line": 24,
+                "column": 8,
+                "hidden": false
+            }
+        ],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/rlambda_lt.cpp",
+        "file_last_write": 1721745678.0,
+        "definitions": [
+            {
+                "usr": "c:rlambda_lt.cpp@57@macro@EIGEN_USE_BLAS",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_BLAS",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/rlambda_lt.cpp",
+                "line": 4,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:rlambda_lt.cpp@81@macro@EIGEN_USE_LAPACKE",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_LAPACKE",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/rlambda_lt.cpp",
+                "line": 5,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@rlambda_lt#&1d#S0_#S0_#S0_#S0_#&1I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rlambda_lt(const double &, const double &, const double &, const double &, const double &, const int &)",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/rlambda_lt.cpp",
+                "line": 16,
+                "column": 8,
+                "hidden": false
+            }
+        ],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/solve_quartic.cpp",
+        "file_last_write": 1657806530.0,
+        "definitions": [
+            {
+                "usr": "c:solve_quartic.cpp@108@macro@EIGEN_USE_BLAS",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_BLAS",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/solve_quartic.cpp",
+                "line": 7,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:solve_quartic.cpp@132@macro@EIGEN_USE_LAPACKE",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_LAPACKE",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/solve_quartic.cpp",
+                "line": 8,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:solve_quartic.cpp@159@macro@pi",
+                "kind": 9,
+                "parent_name": "",
+                "name": "pi",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/solve_quartic.cpp",
+                "line": 9,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@solve_quartic#&1I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "solve_quartic(const Eigen::VectorXd &)",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/solve_quartic.cpp",
+                "line": 18,
+                "column": 8,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@solve_quartic2#&1d#S0_#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "solve_quartic2(const double &, const double &, const double &)",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/solve_quartic.cpp",
+                "line": 65,
+                "column": 8,
+                "hidden": false
+            }
+        ],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/solve_quartic.h",
+        "file_last_write": 1657833520.0,
+        "definitions": [],
+        "hidden": false
+    },
+    {
+        "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/truncnorm.cpp",
+        "file_last_write": 1655473784.0,
+        "definitions": [
+            {
+                "usr": "c:truncnorm.cpp@529@macro@EIGEN_USE_BLAS",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_BLAS",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/truncnorm.cpp",
+                "line": 10,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:truncnorm.cpp@553@macro@EIGEN_USE_LAPACKE",
+                "kind": 9,
+                "parent_name": "",
+                "name": "EIGEN_USE_LAPACKE",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/truncnorm.cpp",
+                "line": 11,
+                "column": 9,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@normstdrnd#*d#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "normstdrnd(double *, double *)",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/truncnorm.cpp",
+                "line": 22,
+                "column": 6,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@ltnorm#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "ltnorm(double, double)",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/truncnorm.cpp",
+                "line": 36,
+                "column": 8,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@rtnorm#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rtnorm(double, double)",
+                "file": "C:/Users/HP/Desktop/infHS_pkg/infHS/src/truncnorm.cpp",
+                "line": 56,
+                "column": 8,
+                "hidden": false
+            }
+        ],
+        "hidden": false
+    }
+]

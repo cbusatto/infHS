@@ -1,0 +1,123 @@
+a = res_infHS_VB$Lambda[1, 1]
+b = res_infHS_VB$Lambda[1, 2]
+c = res_infHS_VB$Lambda[1, 3]
+
+lkf = log_kf(a, sqrt(b), c)
+lkf
+0.5 + 0.5 * m_e2(a, sqrt(b), c, lkf)
+
+
+load("C:/Users/HP/Desktop/infHS/res_n100_p200_p500_cluster_corr.Rdata")
+RES1 = RES
+load("C:/Users/HP/Desktop/infHS/res_n100_p1000_p1500_cluster_corr.Rdata")
+RES2 = RES
+# load("C:/Users/HP/Desktop/infHS/res_n200_p1500_eta3_eta5.Rdata")
+# RES3 = RES
+
+RES = c(RES1, RES2, RES3)
+
+load("res_n200_p100_p1500.RData")
+
+RES = c(RES1, RES2)
+save(RES, file = "res_n100_p_all_cluster_corr.RData")
+
+load("C:/Users/HP/Desktop/infHS/res_n100_p_all_independent.Rdata")
+load("C:/Users/HP/Desktop/infHS/res_n200_p_all_independent.Rdata")
+
+load("C:/Users/HP/Desktop/infHS/res_n100_p_all_cluster_corr.Rdata")
+load("C:/Users/HP/Desktop/infHS/res_n200_p_all_cluster_corr.Rdata")
+
+load("C:/Users/HP/Desktop/infHS/res_n100_p_all_scale_free_corr.Rdata")
+load("C:/Users/HP/Desktop/infHS/res_n200_p_all_scale_free_corr.Rdata")
+
+
+
+get_res = function (RES, n) {
+  ###### ETA = 1
+  out_mat = matrix(0, 10, 8)
+  colnames(out_mat) = c("n", "p", "method", "RMSE", "RMSE_beta0", "RMSE_beta1", "COV", "WIDTH")
+  out_mat[, 1] = n
+  out_mat[, 2] = c(rep(200, 5), rep(500, 5))
+  # out_mat[, 3] = rep(c("infHS_FB", "infHS_VB", "HS", "LASSO", "ECPC"), 4)
+  
+  out_mat[, 4] = c(RES[[1]]$RMSE, RES[[2]]$RMSE)
+  out_mat[, 5] = c(RES[[1]]$RMSE0, RES[[2]]$RMSE0)
+  out_mat[, 6] = c(RES[[1]]$RMSE1, RES[[2]]$RMSE1)
+  
+  out_mat[, 7] = c(apply(RES[[1]]$cov, 1, mean), 0, 0, 
+                   apply(RES[[2]]$cov, 1, mean), 0, 0)
+  out_mat[, 8] = c(apply(RES[[1]]$width, 1, mean), 0, 0, 
+                   apply(RES[[2]]$width, 1, mean), 0, 0)
+  
+  # cbind(rep(c("infHS_FB", "infHS_VB", "HS", "LASSO", "ECPC"), 4), round(out_mat[, -3], 3))
+  
+  
+  # cbind(rep(c("infHS_FB", "infHS_VB", "HS", "LASSO", "ECPC"), 4), round(out_mat_eta5[, -3], 3))
+  
+  return(out_mat)
+}
+
+
+get_res_auc = function (RES, n) {
+  ###### ETA = 1
+  out_mat = matrix(0, 10, 8)
+  colnames(out_mat) = c("n", "p", "method", "AUC", "AUC_mpm", "AUC_dss1", "AUC_dss2", "AUC_hpd")
+  out_mat[, 1] = n
+  out_mat[, 2] = c(rep(200, 5), rep(500, 5))
+  # out_mat[, 3] = rep(c("infHS_FB", "infHS_VB", "HS", "LASSO", "ECPC"), 4)
+  
+  out_mat[, 4] = c(0, 0, 0, RES[[1]]$AUC[12], 0,
+                   0, 0, 0, RES[[2]]$AUC[12], 0)
+  
+  out_mat[, 5] = c(RES[[1]]$AUC[1], RES[[1]]$AUC[5], 0, 0, 0,
+                   RES[[2]]$AUC[1], RES[[2]]$AUC[5], 0, 0, 0)
+  
+  out_mat[, 6] = c(RES[[1]]$AUC[2], RES[[1]]$AUC[6], RES[[1]]$AUC[9], 0, RES[[1]]$AUC[13],
+                   RES[[2]]$AUC[2], RES[[2]]$AUC[6], RES[[2]]$AUC[9], 0, RES[[2]]$AUC[13])
+  
+  out_mat[, 7] = c(RES[[1]]$AUC[3], RES[[1]]$AUC[7], RES[[1]]$AUC[10], 0, RES[[1]]$AUC[14],
+                   RES[[2]]$AUC[3], RES[[2]]$AUC[7], RES[[2]]$AUC[10], 0, RES[[2]]$AUC[14])
+  
+  
+  out_mat[, 8] = c(RES[[1]]$AUC[4], RES[[1]]$AUC[8], RES[[1]]$AUC[11], 0, 0,
+                   RES[[2]]$AUC[4], RES[[2]]$AUC[8], RES[[2]]$AUC[11], 0, 0)
+  
+  # cbind(rep(c("infHS_FB", "infHS_VB", "HS", "LASSO", "ECPC"), 4), round(out_mat[, -3], 3))
+  
+  return(out_mat)
+}
+
+
+get_res = function (RES, n) {
+  ###### ETA = 1
+  out_mat = matrix(0, 15, 8)
+  colnames(out_mat) = c("n", "p", "method", "RMSE", "RMSE_beta0", "RMSE_beta1", "COV", "WIDTH")
+  out_mat[, 1] = n
+  out_mat[, 2] = c(rep(200, 5), rep(500, 5), rep(1000, 5))
+  # out_mat[, 3] = rep(c("infHS_FB", "infHS_VB", "HS", "LASSO", "ECPC"), 4)
+  
+  out_mat[, 4] = c(RES[[1]]$RMSE, RES[[2]]$RMSE, RES[[3]]$RMSE)
+  out_mat[, 5] = c(RES[[1]]$RMSE0, RES[[2]]$RMSE0, RES[[3]]$RMSE0)
+  out_mat[, 6] = c(RES[[1]]$RMSE1, RES[[2]]$RMSE1, RES[[3]]$RMSE1)
+  
+  out_mat[, 7] = c(apply(RES[[1]]$cov, 1, mean), 0, 0, 
+                   apply(RES[[2]]$cov, 1, mean), 0, 0,
+                   apply(RES[[3]]$cov, 1, mean), 0, 0)
+  out_mat[, 8] = c(apply(RES[[1]]$width, 1, mean), 0, 0, 
+                   apply(RES[[2]]$width, 1, mean), 0, 0,
+                   apply(RES[[3]]$width, 1, mean), 0, 0)
+  
+  # cbind(rep(c("infHS_FB", "infHS_VB", "HS", "LASSO", "ECPC"), 4), round(out_mat[, -3], 3))
+  
+  
+  # cbind(rep(c("infHS_FB", "infHS_VB", "HS", "LASSO", "ECPC"), 4), round(out_mat_eta5[, -3], 3))
+  
+  return(out_mat)
+}
+
+round(get_res(RES, 50), 3)
+round(get_res_auc(RES, 50), 3)
+
+
+X = matrix(rnorm(3*5), 3, 5)
+chol(t(X) %*% X)

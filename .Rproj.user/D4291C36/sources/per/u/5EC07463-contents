@@ -1,0 +1,88 @@
+load("C:/Users/HP/Desktop/infHS/res_n50_p_all_sensitivity.Rdata")
+R_n50_G0 = RES_G0
+R_n50_G1 = RES_G1
+R_n50_G2 = RES_G2
+R_n50_G3 = RES_G3
+
+load("C:/Users/HP/Desktop/infHS/res_n100_p_all_sensitivity.Rdata")
+R_n100_G0 = RES_G0
+R_n100_G1 = RES_G1
+R_n100_G2 = RES_G2
+R_n100_G3 = RES_G3
+
+load("C:/Users/HP/Desktop/infHS/res_n200_p_all_sensitivity.Rdata")
+R_n200_G0 = RES_G0
+R_n200_G1 = RES_G1
+R_n200_G2 = RES_G2
+R_n200_G3 = RES_G3
+
+k = 1
+round(c(R_n50_G0[[1]]$rmse_HS, R_n50_G0[[1]]$rmse0_HS, R_n50_G0[[1]]$rmse1_HS, R_n50_G0[[1]]$auc_HS), 3)
+round(c(R_n50_G0[[2]]$rmse_HS, R_n50_G0[[2]]$rmse0_HS, R_n50_G0[[2]]$rmse1_HS, R_n50_G0[[2]]$auc_HS), 3) 
+round(c(R_n50_G0[[3]]$rmse_HS, R_n50_G0[[3]]$rmse0_HS, R_n50_G0[[3]]$rmse1_HS, R_n50_G0[[3]]$auc_HS), 3)
+round(c(R_n50_G0[[4]]$rmse_HS, R_n50_G0[[4]]$rmse0_HS, R_n50_G0[[4]]$rmse1_HS, R_n50_G0[[4]]$auc_HS), 3)
+
+## FB G0
+##
+
+round(c(R_n50_G0[[1]]$rmse_FB, R_n50_G0[[1]]$rmse0_FB, R_n50_G0[[1]]$rmse1_FB, R_n50_G0[[1]]$auc_FB), 3) 
+round(c(R_n50_G0[[2]]$rmse_FB, R_n50_G0[[2]]$rmse0_FB, R_n50_G0[[2]]$rmse1_FB, R_n50_G0[[2]]$auc_FB), 3)
+round(c(R_n50_G0[[3]]$rmse_FB, R_n50_G0[[3]]$rmse0_FB, R_n50_G0[[3]]$rmse1_FB, R_n50_G0[[3]]$auc_FB), 3)
+round(c(R_n50_G0[[4]]$rmse_FB, R_n50_G0[[4]]$rmse0_FB, R_n50_G0[[4]]$rmse1_FB, R_n50_G0[[4]]$auc_FB), 3)
+
+## FB G1
+##
+
+round(c(R_n50_G1[[1]]$rmse_FB, R_n50_G1[[1]]$rmse0_FB, R_n50_G1[[1]]$rmse1_FB, R_n50_G1[[1]]$auc_FB), 3)
+round(c(R_n50_G1[[2]]$rmse_FB, R_n50_G1[[2]]$rmse0_FB, R_n50_G1[[2]]$rmse1_FB, R_n50_G1[[2]]$auc_FB), 3)
+round(c(R_n50_G1[[3]]$rmse_FB, R_n50_G1[[3]]$rmse0_FB, R_n50_G1[[3]]$rmse1_FB, R_n50_G1[[3]]$auc_FB), 3)
+round(c(R_n50_G1[[4]]$rmse_FB, R_n50_G1[[4]]$rmse0_FB, R_n50_G1[[4]]$rmse1_FB, R_n50_G1[[4]]$auc_FB), 3)
+
+## FB G2
+##
+
+round(c(R_n50_G2[[1]]$rmse_FB, R_n50_G2[[1]]$rmse0_FB, R_n50_G2[[1]]$rmse1_FB, R_n50_G2[[1]]$auc_FB), 3)
+round(c(R_n50_G2[[2]]$rmse_FB, R_n50_G2[[2]]$rmse0_FB, R_n50_G2[[2]]$rmse1_FB, R_n50_G2[[2]]$auc_FB), 3)
+round(c(R_n50_G2[[3]]$rmse_FB, R_n50_G2[[3]]$rmse0_FB, R_n50_G2[[3]]$rmse1_FB, R_n50_G2[[3]]$auc_FB), 3)
+round(c(R_n50_G2[[4]]$rmse_FB, R_n50_G2[[4]]$rmse0_FB, R_n50_G2[[4]]$rmse1_FB, R_n50_G2[[4]]$auc_FB), 3)
+
+## FB G3
+##
+
+round(c(R_n50_G3[[1]]$rmse_FB, R_n50_G3[[1]]$rmse0_FB, R_n50_G3[[1]]$rmse1_FB, R_n50_G3[[1]]$auc_FB), 3)
+round(c(R_n50_G3[[2]]$rmse_FB, R_n50_G3[[2]]$rmse0_FB, R_n50_G3[[2]]$rmse1_FB, R_n50_G3[[2]]$auc_FB), 3)
+round(c(R_n50_G3[[3]]$rmse_FB, R_n50_G3[[3]]$rmse0_FB, R_n50_G3[[3]]$rmse1_FB, R_n50_G3[[3]]$auc_FB), 3)
+round(c(R_n50_G3[[4]]$rmse_FB, R_n50_G3[[4]]$rmse0_FB, R_n50_G3[[4]]$rmse1_FB, R_n50_G3[[4]]$auc_FB), 3)
+
+## VB G0
+##
+
+round(c(R_n50_G0[[1]]$rmse_VB, R_n50_G0[[1]]$rmse0_VB, R_n50_G0[[1]]$rmse1_VB, R_n50_G0[[1]]$auc_VB), 3)
+round(c(R_n50_G0[[2]]$rmse_VB, R_n50_G0[[2]]$rmse0_VB, R_n50_G0[[2]]$rmse1_VB, R_n50_G0[[2]]$auc_VB), 3)
+round(c(R_n50_G0[[3]]$rmse_VB, R_n50_G0[[3]]$rmse0_VB, R_n50_G0[[3]]$rmse1_VB, R_n50_G0[[3]]$auc_VB), 3)
+round(c(R_n50_G0[[4]]$rmse_VB, R_n50_G0[[4]]$rmse0_VB, R_n50_G0[[4]]$rmse1_VB, R_n50_G0[[4]]$auc_VB), 3)
+
+## VB G1
+##
+
+round(c(R_n50_G1[[1]]$rmse_VB, R_n50_G1[[1]]$rmse0_VB, R_n50_G1[[1]]$rmse1_VB, R_n50_G1[[1]]$auc_VB), 3)
+round(c(R_n50_G1[[2]]$rmse_VB, R_n50_G1[[2]]$rmse0_VB, R_n50_G1[[2]]$rmse1_VB, R_n50_G1[[2]]$auc_VB), 3)
+round(c(R_n50_G1[[3]]$rmse_VB, R_n50_G1[[3]]$rmse0_VB, R_n50_G1[[3]]$rmse1_VB, R_n50_G1[[3]]$auc_VB), 3)
+round(c(R_n50_G1[[4]]$rmse_VB, R_n50_G1[[4]]$rmse0_VB, R_n50_G1[[4]]$rmse1_VB, R_n50_G1[[4]]$auc_VB), 3)
+
+## VB G2
+##
+
+round(c(R_n50_G2[[1]]$rmse_VB, R_n50_G2[[1]]$rmse0_VB, R_n50_G2[[1]]$rmse1_VB, R_n50_G2[[1]]$auc_VB), 3)
+round(c(R_n50_G2[[2]]$rmse_VB, R_n50_G2[[2]]$rmse0_VB, R_n50_G2[[2]]$rmse1_VB, R_n50_G2[[2]]$auc_VB), 3)
+round(c(R_n50_G2[[3]]$rmse_VB, R_n50_G2[[3]]$rmse0_VB, R_n50_G2[[3]]$rmse1_VB, R_n50_G2[[3]]$auc_VB), 3)
+round(c(R_n50_G2[[4]]$rmse_VB, R_n50_G2[[4]]$rmse0_VB, R_n50_G2[[4]]$rmse1_VB, R_n50_G2[[4]]$auc_VB), 3)
+
+## VB G3
+##
+
+round(c(R_n50_G3[[1]]$rmse_VB, R_n50_G3[[1]]$rmse0_VB, R_n50_G3[[1]]$rmse1_VB, R_n50_G3[[1]]$auc_VB), 3)
+round(c(R_n50_G3[[2]]$rmse_VB, R_n50_G3[[2]]$rmse0_VB, R_n50_G3[[2]]$rmse1_VB, R_n50_G3[[2]]$auc_VB), 3)
+round(c(R_n50_G3[[3]]$rmse_VB, R_n50_G3[[3]]$rmse0_VB, R_n50_G3[[3]]$rmse1_VB, R_n50_G3[[3]]$auc_VB), 3)
+round(c(R_n50_G3[[4]]$rmse_VB, R_n50_G3[[4]]$rmse0_VB, R_n50_G3[[4]]$rmse1_VB, R_n50_G3[[4]]$auc_VB), 3)
+

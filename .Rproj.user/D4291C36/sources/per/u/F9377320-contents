@@ -1,0 +1,627 @@
+library(infHS)
+library(horseshoe)
+# library(ecpc)
+library(glmnet)
+library(pROC)
+library(mvtnorm)
+
+lasso_auc = function(fit, tm, minspec = 0.95) {
+  
+  #fit = dss_HS; tm = true_model[-1]; minspec = 0.95
+  betas = fit$beta[-1,] #remove intercept
+  p = dim(betas)[1]
+  score = rep(0,p)
+  nfit = ncol(betas)
+  
+  for(k in 1:nfit) {
+    whnon0 = which(betas[, nfit+1-k] != 0)
+    if(length(whnon0) > 0) score[whnon0] = k
+  }
+  
+  rocsel = roc(tm ~ score)
+  pauc = auc(rocsel, partial.auc = c(minspec, 1))
+  auc = auc(rocsel)
+  
+  return(list(auc = auc, pauc = pauc, roc = rocsel))
+}
+
+lasso_auc2 = function(fit, tm, minspec = 0.95) {
+  
+  #fit = dss_HS; tm = true_model[-1]; minspec = 0.95
+  betas = fit$beta #remove intercept
+  p = dim(betas)[1]
+  score = rep(0,p)
+  nfit = ncol(betas)
+  
+  for(k in 1:nfit) {
+    whnon0 = which(betas[, nfit+1-k] != 0)
+    if(length(whnon0) > 0) score[whnon0] = k
+  }
+  
+  rocsel = roc(tm ~ score)
+  pauc = auc(rocsel, partial.auc = c(minspec, 1))
+  auc = auc(rocsel)
+  
+  return(list(auc = auc, pauc = pauc, roc = rocsel))
+}
+
+lf = function(x, d, a, b, lkf) -log(x) - log(1 + x^2) - d / x^2 - a^2 * x^2 + b * x - lkf
+tf = function(x, d, a, b, lkf, lxs) exp(-log(x) - log(1 + x^2) - d / x^2 - a^2 * x^2 + b * x - lkf - lxs)
+
+plambda = function(d, a, b) {
+  lkf = log_kf(d, a, b)
+  
+  xs = optimize(lf, c(0, 1000), d, a, b, lkf, maximum = T)$maximum
+  lxs = lf(xs, d, a, b, lkf)
+  
+  i0 = integrate(tf, 0, Inf, d, a, b, lkf, lxs)$value
+  return (exp(log(i0) + lxs))
+}
+
+## ::::::::::::::::::::::::::::::::::::::::::::
+## Set n (one value), p (more values) and p0
+
+set.seed(22)
+nrep = 15
+
+n = 50
+ntest = 500
+
+# pp = c(200, 500)
+pp = c(200, 500, 1000, 1500)
+p0 = 50
+
+## ::::::::::::::::::::::::::::::::::::::::::::
+## MAIN CYCLE
+
+RES = list()
+index = 0
+
+## :::::::::::::::::::::
+## CYCLE OVER p
+
+for (p in pp) {
+  print(paste("p:", p))
+  # f1 = paste("res_n", n, "_p", p, ".RData", sep = "")
+  
+  ## :::::::::::::::::::::
+  ## CYCLE OVER eta
+  
+  index = index + 1
+  RES[[index]] = list()
+  RES[[index]]$p = p
+  RES[[index]]$p0 = p0
+  RES[[index]]$n = n
+  
+  ## :::: SIMULATE beta, X AND X_test ::::
+  
+  data_SIG = matrix(rnorm((n+ntest)*p), n+ntest, p)
+  X = data_SIG[1:n, ]
+  X = cbind(rep(1, n), scale(X))
+  #
+  X_test = data_SIG[(n+1):(n+ntest), ]
+  X_test = cbind(rep(1, ntest), scale(X_test))
+  
+  # data_SIG = huge::huge.generator(n = n + ntest, d = p, graph = 'cluster',
+  #                                 v = 0.2, u = 0.5, g = p/20)
+  # # round(data_SIG$sigma, 2)
+  # Sig = data_SIG$sigma
+  # X = data_SIG$data[1:n, ]
+  # X = cbind(rep(1, n), scale(X))
+  # 
+  # X_test = data_SIG$data[(n+1):(n+ntest), ]
+  # X_test = cbind(rep(1, ntest), scale(X_test))
+  
+  # Sigma = matrix(0.5, p, p)
+  # diag(Sigma) = 1
+  
+  # Sigma = matrix(0, p, p)
+  # for (s in 1:25) {
+  #   v = rbinom(p, 1, 0.2)
+  #   Sigma = Sigma + rgamma(1, 0.5, 1) * v %*% t(v)
+  # }
+  # diag(Sigma) = diag(Sigma) + max(rexp(1), 1)
+  # 
+  # Sigma = solve(Sigma)
+  # diag(Sigma) = diag(Sigma) + max(rexp(1), 1)
+  # X_all = spam::rmvnorm(n+ntest, Sigma = Sigma)
+  # X = cbind(rep(1, n), scale(X_all[1:n, ]))
+  # X_test = cbind(rep(1, ntest), scale(X_all[(n+1):(n+ntest), ]))
+  
+  beta0 = rep(0, p+1)
+  beta0[1] = rnorm(1, 0, sqrt(0.5))
+  u = rbinom(p0, 1, 0.4)
+  ix = sample(1:p, p0)
+  ix_no = setdiff(1:p, ix)
+  beta0[ix+1] = (-1)^(u) * (0.75 * log(n) / sqrt(n) + abs(rnorm(p0, 0, sqrt(0.75))))
+  
+  # beta0[2:(p0+1)] = rnorm(p0,0,sd=0.3)
+  # beta0[(p0+1):p] = rnorm(p-p0,0,sd=0.1)
+  # beta0[2:11] = factor*beta0[2:11]
+  
+  ## true model
+  true_model = rep(0, p+1)
+  true_model[1] = 1
+  true_model[ix+1] = 1
+  
+  ## :::: SIMULATE CO-DATA SOURCES (D = 2) ::::
+  
+  p01 = 30
+  p02 = 10
+  G1size = 50
+  G2size = 70
+  
+  G1 = rep(0, p)
+  G1[ix[1:5]] = 1
+  G1[sample(ix[-c(1:5)], p01-5)] = 1
+  G1[sample(ix_no, G1size-p01)] = 1
+  
+  G2 = rep(0, p)
+  G2[ix[1:5]] = 1
+  G2[sample(ix[-c(1:5)], p02-5)] = 1
+  G2[sample(ix_no, G2size-p02)] = 1
+  
+  Z = list()
+  Z[[1]] = rep(1, p)
+  Z[[2]] = model.matrix(~ -1 + as.factor(G1))[, 2]
+  Z[[3]] = model.matrix(~ -1 + as.factor(G2))[, 2]
+  
+  D = 2 + 1   ## (intercept included)
+  md = c(1, 1, 1)
+  
+  ## :::: SET HYPERPARAMETERS ::::
+  
+  ## hyperparameters for sigma^2
+  hyp_sigma = c(0.5, 10)
+  
+  ## hyperparameters for \kappa_d
+  # a_k = rep(1, D)
+  # b_k = rep(10, D)
+  a_k = c(1, 1, 1)
+  b_k = c(5, 10, 10)
+  
+  ## :::::::::::::::::::::
+  ## NREP EXPERIMENTS
+  
+  res_beta = matrix(0, 5, p)
+  rownames(res_beta) = c("infHS_FB", "infHS_VB", "HS", "LASSO", "ECPC")
+  res_sd_beta = matrix(0, 3, p)
+  rownames(res_sd_beta) = c("infHS_FB", "infHS_VB", "HS")
+  res_cov = matrix(0, 3, p)
+  rownames(res_cov) = c("infHS_FB", "infHS_VB", "HS")
+  res_width = matrix(0, 3, p)
+  rownames(res_width) = c("infHS_FB", "infHS_VB", "HS")
+  
+  res_AUC = rep(0, 14)
+  names(res_AUC) = c("infHS_FB_mpm", "infHS_FB_dss1", "infHS_FB_dss2", "infHS_FB_hpd", "infHS_VB_mpm", "infHS_VB_dss1", "infHS_VB_dss2", "infHS_VB_hpd", "HS_dss1", "HS_dss2", "HS_hpd", "LASSO", "ECPC_dss1", "ECPC_dss2")
+  res_RMSE0 = rep(0, 5)
+  names(res_RMSE0) = c("infHS_FB", "infHS_VB", "HS", "LASSO", "ECPC")
+  res_RMSE1 = rep(0, 5)
+  names(res_RMSE1) = c("infHS_FB", "infHS_VB", "HS", "LASSO", "ECPC")
+  res_RMSE = rep(0, 5)
+  names(res_RMSE) = c("infHS_FB_BMA", "infHS_VB", "HS_BMA", "LASSO", "ECPC")
+  res_time = rep(0, 5)
+  names(res_time) = c("infHS_FB", "infHS_VB", "HS", "LASSO", "ECPC")
+  
+  
+  for(is in 1:nrep) {
+    print(paste("p:", p))
+    print(paste("repeat:", is))
+    
+    ## :::: simulate y ::::
+    
+    y = X %*% beta0 + rnorm(n)
+    y_test = X_test %*% beta0 + rnorm(ntest)
+    
+    ## ::::::::::::::: run infHS: Gibbs sampling
+    
+    print(" ::::::::::: INFHS FB ")
+    
+    B = 10000
+    bn = 5000
+    
+    time_GIBBS = proc.time()
+    res_infHS_GIBBS = infHS_FB(B, bn, 
+                               y = y, X = X, Z = Z, M = sum(md), 
+                               hyp_sigma = hyp_sigma, 
+                               a_k = a_k, b_k = b_k, 
+                               ping = 1000)
+    time_GIBBS = (proc.time() - time_GIBBS)[[3]]
+    
+    print("ok fb")
+    
+    
+    ## ::::::::::::::: run infHS: Variational approximation
+    
+    print(" ::::::::::: INFHS VB ")
+    
+    bmax = 2000
+    
+    time_VB = proc.time()
+    res_infHS_VB = infHS_VB(y = y, X = X, Z = Z, M = sum(md), 
+                            hyp_sigma = hyp_sigma,
+                            a_k = a_k, b_k = b_k, 
+                            eps = 0.001, ping = 250, bmax = bmax)
+    time_VB = (proc.time() - time_VB)[[3]]
+    
+    print("ok vb")
+    
+    
+    ## ::::::::::::::: run HS
+    
+    print(" ::::::::::: HORSESHOE ")
+    
+    time_hs = proc.time()
+    res_hs = horseshoe(y, X, method.tau = "truncatedCauchy", method.sigma = "Jeffreys",
+                       burn = 5000, nmc = 5000)
+    time_hs = (proc.time() - time_hs)[[3]]
+    
+    print("ok hs")
+    
+    
+    ## ::::::::::::::: run LASSO
+    
+    print(" ::::::::::: LASSO ")
+    
+    time_LASSO = proc.time()
+    # res_LASSO = cv.glmnet(X, y, alpha = 1)
+    # 
+    # #find optimal lambda value that minimizes test MSE
+    # best_lambda = res_LASSO$lambda.min
+    # best_lambda
+    # res_LASSO = glmnet(X, y, alpha = 1, lambda = best_lambda)
+    
+    res_LASSO = glmnet(X[, -1], y, alpha = 1, intercept = T)
+    
+    time_LASSO = (proc.time() - time_LASSO)[[3]]
+    
+    print("ok lasso")
+    
+    
+    ## ::::::::::::::: run ecpc
+    
+    # print(" ::::::::::: ECPC ")
+    # G1gr = list(gr1 = which(G1 == 1), gr2 = which(G1 == 0))
+    # G2gr = list(gr1 = which(G2 == 1), gr2 = which(G2 == 0))
+    # X_ecpc = X[,-1]
+    # 
+    # time_ecpc = proc.time()
+    # res_ecpc = try(ecpc(Y = y, X = X_ecpc, groupsets = list(G1gr, G2gr), intrcpt = T))
+    # if(class(res_ecpc) == 'try-error') res_ecpc = ecpc(Y = y, X = X_ecpc, groupsets = list(G1gr, G2gr), intrcpt = T, 
+    #                                                    hypershrinkage = c("none", "none"))
+    # time_ecpc = (proc.time() - time_ecpc)[[3]]
+    # 
+    # print("ok ecpc")
+    
+    ## ::::::::::::::::::::::::::::::::::::::::::::
+    ## PERFORMANCE INDEXES
+    
+    ## ::::::::::::::: infHS: Gibbs sampling
+    
+    ## Estimated beta
+    beta_FB = apply(res_infHS_GIBBS$Beta, 2, mean)
+    sd_FB = apply(res_infHS_GIBBS$Beta, 2, sd)
+    
+    ## Empirical coverage rate of CI
+    CI_FB = apply(res_infHS_GIBBS$Beta[, -1], 2, function(x) quantile(x, probs = c(0.025, 0.975)))
+    cov_FB = (CI_FB[1, ] <= beta0[-1]) & (beta0[-1] <= CI_FB[2, ])
+    width_FB = CI_FB[2, ] - CI_FB[1, ]
+    
+    ## RMSE0 and RMSE1 for beta
+    rmse1_FB = sqrt(mean((beta0[-1][ix] - beta_FB[-1][ix])^2))
+    rmse0_FB = sqrt(mean((beta0[-1][-ix] - beta_FB[-1][-ix])^2))
+    
+    ## Posterior inclusion probabilies for MPM model
+    prob_FB = apply(res_infHS_GIBBS$Lambda[, -1], 2, function(x) mean(x / (1 + x)))
+    
+    ## DSS selection
+    pf_FB = 1 / abs(beta_FB)
+    dss_FB = glmnet(x = X, y = X %*% beta_FB, family = "gaussian", intercept = FALSE, alpha = 1,
+                    nlambda = 100, standardize = FALSE, penalty.factor = pf_FB, lambda.min.ratio = 0.0001)
+    
+    # whlam = which(dss_FB$df <= round(p0 / 2))
+    # takelam = rev(whlam)[1]
+    # beta_dss1 = dss_FB$beta[, takelam]
+    # 
+    # whlam = which(dss_FB$df <= p0)
+    # takelam = rev(whlam)[1]
+    # beta_dss2 = dss_FB$beta[, takelam]
+    # 
+    # m_FB_dss1 = m_FB_dss2 = rep(0, p)
+    # m_FB_dss1[which(beta_dss1[-1] != 0)] = 1
+    # m_FB_dss2[which(beta_dss2[-1] != 0)] = 1
+    
+    m_FB_hpd = rep(1, p)
+    m_FB_hpd[(CI_FB[1, ] <= 0.0) & (0.0 <= CI_FB[2, ])] = 0
+    
+    ## AUC with DSS and MPM selections  
+    # auc_FB_dss1 = pROC::roc(true_model[-1], m_FB_dss1)$auc
+    # auc_FB_dss2 = pROC::roc(true_model[-1], m_FB_dss2)$auc
+    auc_FB_dss1 = lasso_auc(dss_FB, true_model[-1])$auc
+    auc_FB_dss2 = 0.0
+    
+    auc_FB_mpm = pROC::roc(true_model[-1], prob_FB)$auc
+    auc_FB_hpd = pROC::roc(true_model[-1], m_FB_hpd)$auc
+    
+    ## RMSE for predictive performance with Bayesian Model Averaging
+    pred_FB = apply(res_infHS_GIBBS$Beta, 1, function(x) X_test %*% x)
+    pred_FB = apply(pred_FB, 1, mean)
+    rmse_FB_BMA = sqrt(mean((y_test - pred_FB)^2))
+    
+    ## Computational time
+    CP_FB = time_GIBBS
+    
+    
+    ## ::::::::::::::: infHS: Variational approximation
+    
+    ## Estimated beta
+    beta_VB = res_infHS_VB$beta
+    sd_VB = sqrt(res_infHS_VB$var_beta)
+    
+    ## Empirical coverage rate of CI
+    CI_VB = matrix(0, 2, p)
+    CI_VB[1, ] = beta_VB[-1] - 1.96 * sd_VB[-1]
+    CI_VB[2, ] = beta_VB[-1] + 1.96 * sd_VB[-1]
+    cov_VB = (CI_VB[1, ] <= beta0[-1]) & (beta0[-1] <= CI_VB[2, ])
+    width_VB = CI_VB[2, ] - CI_VB[1, ]
+    
+    ## RMSE0 and RMSE1 for beta
+    rmse1_VB = sqrt(mean((beta0[-1][ix] - beta_VB[-1][ix])^2))
+    rmse0_VB = sqrt(mean((beta0[-1][-ix] - beta_VB[-1][-ix])^2))
+    
+    ## Posterior inclusion probabilies for MPM model
+    prob_VB = apply(res_infHS_VB$Lambda, 1, function(x) 1 - plambda(x[1], sqrt(x[2]), x[3]))
+    
+    ## DSS selection
+    pf_VB = 1 / abs(beta_VB)
+    dss_VB = glmnet(x = X, y = X %*% beta_VB, family = "gaussian", intercept = FALSE, alpha = 1,
+                    nlambda = 100, standardize = FALSE, penalty.factor = pf_VB, lambda.min.ratio = 0.0001)
+    
+    # whlam = which(dss_VB$df <= round(p0 / 2))
+    # takelam = rev(whlam)[1]
+    # beta_dss1 = dss_VB$beta[, takelam]
+    # 
+    # whlam = which(dss_VB$df <= p0)
+    # takelam = rev(whlam)[1]
+    # beta_dss2 = dss_VB$beta[, takelam]
+    # 
+    # m_VB_dss1 = m_VB_dss2 = rep(0, p)
+    # m_VB_dss1[which(beta_dss1[-1] != 0)] = 1
+    # m_VB_dss2[which(beta_dss2[-1] != 0)] = 1
+    
+    m_VB_hpd = rep(1, p)
+    m_VB_hpd[(CI_VB[1, ] <= 0.0) & (0.0 <= CI_VB[2, ])] = 0
+    
+    ## AUC with DSS and MPM selections  
+    # auc_VB_dss1 = pROC::roc(true_model[-1], m_VB_dss1)$auc
+    # auc_VB_dss2 = pROC::roc(true_model[-1], m_VB_dss2)$auc
+    auc_VB_dss1 = lasso_auc(dss_VB, true_model[-1])$auc
+    auc_VB_dss2 = 0.0
+    
+    auc_VB_mpm = pROC::roc(true_model[-1], prob_VB)$auc
+    auc_VB_hpd = pROC::roc(true_model[-1], m_VB_hpd)$auc
+    
+    ## RMSE for predictive performance
+    pred_VB = X_test %*% beta_VB
+    rmse_VB = sqrt(mean((y_test - pred_VB)^2))
+    
+    ## Computational time
+    CP_VB = time_VB
+    
+    # ## co-data estimates
+    # gamma_VB
+    # sd_gamma_VB
+    
+    
+    ## ::::::::::::::: Horseshoe regression
+    
+    ## Estimated beta
+    beta_HS = res_hs$BetaHat
+    sd_HS = apply(res_hs$BetaSamples, 1, sd)
+    
+    ## RMSE0 and RMSE1 for beta
+    rmse1_HS = sqrt(mean((beta0[-1][ix] - beta_HS[-1][ix])^2))
+    rmse0_HS = sqrt(mean((beta0[-1][-ix] - beta_HS[-1][-ix])^2))
+    
+    ## Posterior inclusion probabilies for MPM model
+    prob_HS = HS.var.select(res_hs, y, method = "intervals")
+    
+    ## DSS selection
+    pf_HS = 1 / abs(beta_HS)
+    dss_HS = glmnet(x = X, y = X %*% beta_HS, family = "gaussian", intercept = FALSE, alpha = 1,
+                    nlambda = 100, standardize = FALSE, penalty.factor = pf_HS, lambda.min.ratio = 0.0001)
+    
+    # whlam = which(dss_HS$df <= round(p0 / 2))
+    # takelam = rev(whlam)[1]
+    # beta_dss1 = dss_HS$beta[, takelam]
+    # 
+    # whlam = which(dss_HS$df <= p0)
+    # takelam = rev(whlam)[1]
+    # beta_dss2 = dss_HS$beta[, takelam]
+    # 
+    # m_HS_dss1 = m_HS_dss2 = rep(0, p)
+    # m_HS_dss1[which(beta_dss1[-1] != 0)] = 1
+    # m_HS_dss2[which(beta_dss2[-1] != 0)] = 1
+    
+    ## AUC with DSS and credible intervals selections  
+    # auc_HS_dss1 = pROC::roc(true_model[-1], m_HS_dss1)$auc
+    # auc_HS_dss2 = pROC::roc(true_model[-1], m_HS_dss2)$auc
+    auc_HS_dss1 = lasso_auc(dss_HS, true_model[-1])$auc
+    auc_HS_dss2 = 0.0
+    
+    auc_HS_intervals = pROC::roc(true_model[-1], prob_HS[-1])$auc
+    
+    ## RMSE for predictive performance with Bayesian Model Averaging
+    pred_HS = apply(res_hs$BetaSamples, 2, function(x) X_test %*% x)
+    pred_HS = apply(pred_HS, 1, mean)
+    rmse_HS_BMA = sqrt(mean((y_test - pred_HS)^2))
+    
+    ## Empirical coverage rate of CI
+    CI_HS = matrix(0, 2, p)
+    CI_HS[1, ] = res_hs$LeftCI[-1]
+    CI_HS[2, ] = res_hs$RightCI[-1]
+    cov_HS = (CI_HS[1, ] <= beta0[-1]) & (beta0[-1] <= CI_HS[2, ])
+    width_HS = CI_HS[2, ] - CI_HS[1, ]
+    
+    ## Computational time
+    CP_HS = time_hs
+    
+    
+    ## ::::::::::::::: LASSO
+    
+    tmp = cv.glmnet(X, y, alpha = 1)
+    
+    #find optimal lambda value that minimizes test MSE
+    best_lambda = tmp$lambda.min
+    best_lambda
+    tmp = glmnet(X, y, alpha = 1, lambda = best_lambda)
+    
+    ## Estimated beta
+    beta_LASSO = as.vector(coef(tmp))[-2]
+    
+    ## RMSE0 and RMSE1 for beta
+    rmse1_LASSO = sqrt(mean((beta0[-1][ix] - beta_LASSO[-1][ix])^2))
+    rmse0_LASSO = sqrt(mean((beta0[-1][-ix] - beta_LASSO[-1][-ix])^2))
+    
+    # m_LASSO = rep(0, p)
+    # m_LASSO[beta_LASSO[-1] != 0.00] = 1
+    
+    ## AUC with DSS and credible intervals selections  
+    # auc_LASSO = pROC::roc(true_model[-1], m_LASSO)$auc
+    auc_LASSO = lasso_auc2(res_LASSO, true_model[-1])$auc
+    
+    ## RMSE for predictive performance with Bayesian Model Averaging
+    pred_LASSO = X_test %*% beta_LASSO
+    rmse_LASSO = sqrt(mean((y_test - pred_LASSO)^2))
+    
+    ## Computational time
+    CP_LASSO = time_LASSO
+    
+    
+    ## ::::::::::::::: ecpc
+    
+    ## Estimated beta
+    beta_ecpc = beta0[-1]
+    
+    ## RMSE0 and RMSE1 for beta
+    rmse1_ecpc = 0
+    rmse0_ecpc = 0
+    
+    ## DSS selection
+    # pf_ecpc = 1 / abs(c(res_ecpc$intercept, beta_ecpc))
+    # dss_ecpc = glmnet(x = X, y = res_ecpc$intercept + X_ecpc %*% beta_ecpc, family = "gaussian", intercept = FALSE, alpha = 1,
+    #                   nlambda = 100, standardize = FALSE, penalty.factor = pf_ecpc, lambda.min.ratio = 0.0001)
+    
+    # whlam = which(dss_ecpc$df <= round(p0 / 2))
+    # takelam = rev(whlam)[1]
+    # beta_dss1 = dss_ecpc$beta[, takelam]
+    # 
+    # whlam = which(dss_ecpc$df <= p0)
+    # takelam = rev(whlam)[1]
+    # beta_dss2 = dss_ecpc$beta[, takelam]
+    # 
+    # m_ecpc_dss1 = m_ecpc_dss2 = rep(0, p)
+    # m_ecpc_dss1[which(beta_dss1[-1] != 0)] = 1
+    # m_ecpc_dss2[which(beta_dss2[-1] != 0)] = 1
+    
+    ## AUC with DSS 
+    # auc_ecpc_dss1 = pROC::roc(true_model[-1], m_ecpc_dss1)$auc
+    # auc_ecpc_dss2 = pROC::roc(true_model[-1], m_ecpc_dss2)$auc
+    auc_ecpc_dss1 = 0
+    auc_ecpc_dss2 = 0.0
+    
+    ## RMSE for predictive performance
+    pred_ecpc = 0
+    rmse_ecpc = 0
+    
+    ## Computational time
+    CP_ecpc = 0
+    
+    
+    ## ::::::::::::::::::::::::::::::::::::::::::::
+    ## SAVE RESULTS
+    
+    tmp = matrix(0, 5, p)
+    tmp[1, ] = beta_FB[-1]
+    tmp[2, ] = beta_VB[-1]
+    tmp[3, ] = beta_HS[-1]
+    tmp[4, ] = beta_LASSO[-1]
+    tmp[5, ] = beta_ecpc
+    res_beta = res_beta + tmp
+    
+    tmp = matrix(0, 3, p)
+    tmp[1, ] = sd_FB[-1]
+    tmp[2, ] = sd_VB[-1]
+    tmp[3, ] = sd_HS[-1]
+    res_sd_beta = res_sd_beta + tmp
+    
+    tmp = matrix(0, 3, p)
+    tmp[1, ] = cov_FB
+    tmp[2, ] = cov_VB
+    tmp[3, ] = cov_HS
+    res_cov = res_cov + tmp
+    
+    tmp = matrix(0, 3, p)
+    tmp[1, ] = width_FB
+    tmp[2, ] = width_VB
+    tmp[3, ] = width_HS
+    res_width = res_width + tmp
+    
+    res_AUC = res_AUC + c(auc_FB_mpm, auc_FB_dss1, auc_FB_dss2, auc_FB_hpd, 
+                          auc_VB_mpm, auc_VB_dss1, auc_VB_dss2, auc_VB_hpd, 
+                          auc_HS_dss1, auc_HS_dss2, auc_HS_intervals, 
+                          auc_LASSO, 
+                          auc_ecpc_dss1, auc_ecpc_dss2)
+    res_RMSE0 = res_RMSE0 + c(rmse0_FB, rmse0_VB, rmse0_HS, rmse0_LASSO, rmse0_ecpc)
+    res_RMSE1 = res_RMSE1 + c(rmse1_FB, rmse1_VB, rmse1_HS, rmse1_LASSO, rmse1_ecpc)
+    res_RMSE = res_RMSE + c(rmse_FB_BMA, rmse_VB, rmse_HS_BMA, rmse_LASSO, rmse_ecpc)
+    res_time = res_time + c(CP_FB, CP_VB, CP_HS, CP_LASSO, CP_ecpc)
+    
+    # data_save[[tt]][[k]] = list(y = y, X = X, beta_true = beta0, beta_pred = beta_VB)
+    # save(meanres, file = "allres_p1500_tmp.Rdata")
+  }
+  
+  RES[[index]]$beta = res_beta / nrep
+  RES[[index]]$sd_beta = res_sd_beta / nrep
+  RES[[index]]$cov = res_cov / nrep
+  RES[[index]]$width = res_width / nrep
+  RES[[index]]$AUC = res_AUC / nrep
+  RES[[index]]$RMSE0 = res_RMSE0 / nrep
+  RES[[index]]$RMSE1 = res_RMSE1 / nrep
+  RES[[index]]$RMSE = res_RMSE / nrep
+  RES[[index]]$time = res_time / nrep
+  
+  # save(RES, file = "res_n100_p200_cluster_corr.RData")
+  # save(RES, file = f1)
+}
+
+save(RES, file = "res_n50_p_all_independent.RData")
+
+# save(RES, file = f1)
+
+
+i = 2
+RES[[i]]$n
+RES[[i]]$p
+RES[[i]]$eta
+
+RES[[i]]$AUC
+apply(RES[[i]]$width, 1, mean)
+
+RES[[i]]$RMSE0
+RES[[i]]$RMSE1
+RES[[i]]$RMSE
+RES[[i]]$time
+
+boxplot(t(RES[[i]]$cov))
+apply(RES[[i]]$cov, 1, mean)
+
+
+plot(RES[[i]]$beta[1, ], RES[[i]]$beta[2, ], ylab = "Gibbs")
+abline(a = 0, b = 1)
+
+plot(log(RES[[i]]$sd_beta[1, ]), log(RES[[i]]$sd_beta[2, ]))
+abline(a = 0, b = 1)
+
+
+load("C:/Users/HP/Desktop/infHS/res_n100_p200_p500.Rdata")

@@ -1,0 +1,123 @@
+require(infHS)
+require(glmnet)
+
+# require(foreach)
+# library(doSNOW)
+
+# load("~/forClaudio.Rdata")
+# 
+# ind = which(pfark < 0.005)
+# # ind = which(pfark < 0.000001)
+# 
+# n = length(y)
+# 
+# X1 = cbind(rep(1, n), Xfull[, ind])
+# islandplus = islandplus[ind]
+# pfark = pfark[ind]
+# sds = sds[ind]
+# sgnfark = as.factor(sgnfark[ind])
+# Xcancmean = Xcancmean[ind]
+# 
+# save(X1, islandplus, pfark, sds, sgnfark, Xcancmean, y, n, file = "~/data1_sec.RData")
+
+load("~/data1_sec.RData")
+
+# lf0 = function(x, a0) -log(x) - log(1 + x^2) - a0 / x^2 - a0
+# tf0 = function(x, a0, lxs) exp(-log(x) - log(1 + x^2) - a0 / x^2 - a0 - lxs)
+# 
+# plambda0 = function(a0) {
+#   xs = optimize(lf0, c(0, 1000), a0, maximum = T)$maximum
+#   lxs = lf0(xs, a0)
+#   
+#   i0 = integrate(tf0, 0, Inf, a0, lxs)$value
+#   return (exp(log(i0) + lxs))
+# }
+# 
+# lf = function(x, d, a, b, lkf) -log(x) - log(1 + x^2) - d / x^2 - a^2 * x^2 + b * x - lkf
+# tf = function(x, d, a, b, lkf, lxs) exp(-log(x) - log(1 + x^2) - d / x^2 - a^2 * x^2 + b * x - lkf - lxs)
+# 
+# plambda = function(d, a, b) {
+#   lkf = log_kf(d, a, b)
+#   
+#   xs = optimize(lf, c(0, 1000), d, a, b, lkf, maximum = T)$maximum
+#   lxs = lf(xs, d, a, b, lkf)
+#   
+#   i0 = integrate(tf, 0, Inf, d, a, b, lkf, lxs)$value
+#   return (exp(log(i0) + lxs))
+# }
+
+md = c(6, 1, 2, 1, 1)
+D = length(md)
+p = length(pfark)
+
+Z1 = model.matrix(~ -1 + as.factor(islandplus))
+Z2 = pfark
+Z3 = model.matrix(~ -1 + as.factor(sgnfark))
+Z4 = sds
+Z5 = Xcancmean
+
+Z = list()
+Z[[1]] = Z1
+Z[[2]] = Z2
+Z[[3]] = Z3
+Z[[4]] = Z4
+Z[[5]] = Z5
+
+yi = rep(0, n)
+yi[which(y == "Precursor")] = 1
+
+
+## :::::::::::::::::::::::::::::::::::::::::::
+## run informative HS model
+
+set.seed(22)
+# RES = matrix(0, n, 2*(p+1) + 22)
+# RES = matrix(0, n, p + 23)
+RES = list()
+
+for(i in 1:n) {
+  print("::::::::::::::::: i: ")
+  print(i)
+  
+  yi_train = y[-i]
+  X1_train = X1[-i, ]
+  
+  yi_train2 = rep(0, length(yi_train))
+  yi_train2[which(yi_train == "Precursor")] = 1
+  
+  yi_test = y[i]
+  x1_test = X1[i, ]
+  
+  RES[[i]] = list()
+  
+  ## :::::::::
+  ## run ihs
+  
+  pmt = proc.time()
+  set.seed(22)
+  m_iHS = infHS_VB_probit(yi_train2, X1_train, Z, sum(md), a_k = rep(1, D), b_k = rep(10, D), 
+                          ping = 500, eps = 1e-03, bmax = 2000)
+  pmt = proc.time() - pmt
+  
+  RES[[i]]$res_infHS = m_iHS
+}
+
+save(RES, file = "res_infhs_meth.RData")
+
+y_pred = y_pred_dss = rep(0, n)
+for (i in 1:n) {
+  x1_test = X1[i, ]
+  X1_train = X1[-i, ]
+  
+  beta_VB = RES[[i]]$res_infHS$beta
+  y_pred[i] = pnorm(x1_test %*% beta_VB)
+  y_pred[i] = exp(x1_test %*% beta_VB) / (1 +  exp(x1_test %*% beta_VB))
+  # 
+  # pf_VB = 1 / abs(beta_VB)
+  # dss_VB = glmnet(x = X1_train, y = X1_train %*% beta_VB, family = "gaussian", intercept = FALSE, alpha = 1,
+  #                 nlambda = 100, standardize = FALSE, penalty.factor = pf_VB, lambda.min.ratio = 0.0001)
+  # 
+  # dss_VB$beta
+}
+
+auc = roc(yi, y_pred)$auc
